@@ -10,11 +10,11 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public class OnPlayerJoinEvent implements Listener {
+public class OnPlayerQuitEvent implements Listener {
     @EventHandler(ignoreCancelled = true)
-    public void onPlayerJoinEvent(PlayerJoinEvent event) {
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
         final JoinMessage plugin = JoinMessage.getInstance();
         final Configuration config = plugin.getConfig();
         final Server server = plugin.getServer();
@@ -25,7 +25,7 @@ public class OnPlayerJoinEvent implements Listener {
                 server.getPluginManager().isPluginEnabled("PlaceholderAPI");
 
         BaseComponent[] message;
-        String originMessage = config.getString("joinMessage" + (useJsonVersion ? "Json" : ""))
+        String originMessage = config.getString("quitMessage" + (useJsonVersion ? "Json" : ""))
                 .replace("'", "\"");
 
         if (papiEnabled) {
@@ -38,8 +38,7 @@ public class OnPlayerJoinEvent implements Listener {
                 ComponentSerializer.parse(originMessage) :
                 TextComponent.fromLegacyText(originMessage);
 
-
-        event.setJoinMessage("");
+        event.setQuitMessage("");
         server.getLogger().info(message[0].toPlainText());
         for (Player onlinePlayer : server.getOnlinePlayers()) {
             onlinePlayer.spigot().sendMessage(message);

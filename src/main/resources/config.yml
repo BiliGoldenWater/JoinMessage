@@ -1,6 +1,9 @@
-# Join message
-joinMessage: '{{player}} joined the server.'
-joinMessageJson: '{"text": "{{player}} joined the server.", "color": "yellow"}'
+# Join message (If you installed PAPI plugin, you need replace {{player}} to PAPI's placeholder)
+joinMessage: '{{player}} joined the game.'
+joinMessageJson: '{"text": "{{player}} joined the game.", "color": "yellow"}'
+# Quit message
+quitMessage: '{{player}} left the game.'
+quitMessageJson: '{"text": "{{player}} left the game.", "color": "yellow"}'
 # use json version or normal version.
 useJsonVersion: true
 # Monitor config file change/delete and reload/release config file.
