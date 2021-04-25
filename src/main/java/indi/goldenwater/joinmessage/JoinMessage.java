@@ -1,5 +1,6 @@
 package indi.goldenwater.joinmessage;
 
+import indi.goldenwater.joinmessage.listeners.OnPlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -22,6 +23,8 @@ public final class JoinMessage extends JavaPlugin {
             registerWatchService();
             watchServiceRegistered = true;
         }
+
+        getServer().getPluginManager().registerEvents(new OnPlayerJoinEvent(), this);
 
         getLogger().info("Enabled.");
     }

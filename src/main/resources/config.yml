@@ -1,6 +1,6 @@
 # Join message
-joinMessage: '{{player}} join the server.'
-joinMessageJson: '{"text": "{{player}} join the server.", "color": "yellow"}'
+joinMessage: '{{player}} joined the server.'
+joinMessageJson: '{"text": "{{player}} joined the server.", "color": "yellow"}'
 # use json version or normal version.
 useJsonVersion: true
 # Monitor config file change/delete and reload/release config file.

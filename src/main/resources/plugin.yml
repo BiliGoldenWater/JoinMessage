@@ -1,6 +1,6 @@
 name: JoinMessage
 version: ${project.version}
 main: indi.goldenwater.joinmessage.JoinMessage
-softdepend: [ PlaceholderAPI ]
+softdepend: [ PlaceholderAPI, AuthMe ]
 authors: [ Golden_Water ]
 description: A plugin will send custom message when player join the server (can use PAPI's placeholder).
