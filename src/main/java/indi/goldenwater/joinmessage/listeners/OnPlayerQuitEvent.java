@@ -19,6 +19,11 @@ public class OnPlayerQuitEvent implements Listener {
         final Configuration config = plugin.getConfig();
         final Server server = plugin.getServer();
 
+        if (config.getBoolean("justClear")) {
+            event.setQuitMessage("");
+            return;
+        }
+
         final Player player = event.getPlayer();
         final boolean useJsonVersion = config.getBoolean("useJsonVersion");
         final boolean papiEnabled = server.getPluginManager().getPlugin("PlaceholderAPI") != null &&

@@ -6,5 +6,7 @@ quitMessage: '{{player}} left the game.'
 quitMessageJson: '{"text": "{{player}} left the game.", "color": "yellow"}'
 # use json version or normal version.
 useJsonVersion: true
+# just clear default message, will not send join message.
+justClear: false
 # Monitor config file change/delete and reload/release config file.
 fileWatchService: true
