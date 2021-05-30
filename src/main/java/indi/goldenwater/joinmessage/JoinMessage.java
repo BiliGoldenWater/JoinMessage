@@ -2,16 +2,12 @@ package indi.goldenwater.joinmessage;
 
 import indi.goldenwater.joinmessage.listeners.OnPlayerJoinEvent;
 import indi.goldenwater.joinmessage.listeners.OnPlayerQuitEvent;
+import indi.goldenwater.joinmessage.utils.ConfigWatchService;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.io.IOException;
-import java.nio.file.*;
 
 public final class JoinMessage extends JavaPlugin {
     private static JoinMessage instance;
-    private WatchService watchService;
-    private BukkitRunnable watchServiceRunnable;
+    private ConfigWatchService watchService;
 
     @Override
     public void onEnable() {
@@ -20,7 +16,20 @@ public final class JoinMessage extends JavaPlugin {
         saveDefaultConfig();
 
         if (getConfig().getBoolean("fileWatchService")) {
-            registerWatchService();
+            watchService = new ConfigWatchService(this);
+            watchService.register("fileWatchService",
+                    name -> name.endsWith(".yml"),
+                    new ConfigWatchService.DoSomeThing() {
+                        @Override
+                        public void reload() {
+                            reloadConfig();
+                        }
+
+                        @Override
+                        public void release() {
+                            saveDefaultConfig();
+                        }
+                    });
         }
 
         getServer().getPluginManager().registerEvents(new OnPlayerJoinEvent(), this);
@@ -32,55 +41,11 @@ public final class JoinMessage extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        if (watchServiceRunnable.isCancelled()) {
-            watchServiceRunnable.cancel();
+        if (watchService != null) {
+            watchService.unregister();
         }
 
         getLogger().info("Disabled.");
-    }
-
-    private void registerWatchService() {
-        try {
-            Path dataFolder = getDataFolder().toPath();
-            watchService = FileSystems.getDefault().newWatchService();
-            dataFolder.register(watchService, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-            watchServiceRunnable = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try {
-                        WatchKey key;
-                        while ((key = watchService.take()) != null) {
-                            for (WatchEvent<?> event : key.pollEvents()) {
-                                if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-                                    if (event.context().toString().equals("config.yml")) {
-                                        saveDefaultConfig();
-                                    }
-                                } else if (event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-                                    if (event.context().toString().equals("config.yml")) {
-                                        reloadConfig();
-                                        if (!getConfig().getBoolean("fileWatchService")) {
-                                            this.cancel();
-                                        }
-                                    }
-                                }
-                            }
-                            key.reset();
-//                            if (!watchServerRunning) break;
-                        }
-                        try {
-                            watchService.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            watchServiceRunnable.runTaskAsynchronously(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static JoinMessage getInstance() {
