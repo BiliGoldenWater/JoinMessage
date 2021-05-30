@@ -19,30 +19,29 @@ public class OnPlayerJoinEvent implements Listener {
         final Configuration config = plugin.getConfig();
         final Server server = plugin.getServer();
 
-        if (config.getBoolean("justClear")) {
-            event.setJoinMessage("");
-            return;
-        }
-
         final Player player = event.getPlayer();
         final boolean useJsonVersion = config.getBoolean("useJsonVersion");
-        final boolean papiEnabled = server.getPluginManager().getPlugin("PlaceholderAPI") != null &&
-                server.getPluginManager().isPluginEnabled("PlaceholderAPI");
 
         BaseComponent[] message;
         String originMessage = config.getString("joinMessage" + (useJsonVersion ? "Json" : ""))
                 .replace("'", "\"");
 
+        if (originMessage.equals("")) {
+            event.setJoinMessage("");
+            return;
+        }
+
+        final boolean papiEnabled = server.getPluginManager().getPlugin("PlaceholderAPI") != null &&
+                server.getPluginManager().isPluginEnabled("PlaceholderAPI");
         if (papiEnabled) {
             originMessage = PlaceholderAPI.setPlaceholders(player, originMessage);
-        } else {
-            originMessage = originMessage.replace("{{player}}", player.getDisplayName());
         }
+
+        originMessage = originMessage.replace("{{player}}", player.getDisplayName());
 
         message = useJsonVersion ?
                 ComponentSerializer.parse(originMessage) :
                 TextComponent.fromLegacyText(originMessage);
-
 
         event.setJoinMessage("");
         server.getLogger().info(message[0].toPlainText());

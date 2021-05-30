@@ -19,25 +19,25 @@ public class OnPlayerQuitEvent implements Listener {
         final Configuration config = plugin.getConfig();
         final Server server = plugin.getServer();
 
-        if (config.getBoolean("justClear")) {
-            event.setQuitMessage("");
-            return;
-        }
-
         final Player player = event.getPlayer();
         final boolean useJsonVersion = config.getBoolean("useJsonVersion");
-        final boolean papiEnabled = server.getPluginManager().getPlugin("PlaceholderAPI") != null &&
-                server.getPluginManager().isPluginEnabled("PlaceholderAPI");
 
         BaseComponent[] message;
         String originMessage = config.getString("quitMessage" + (useJsonVersion ? "Json" : ""))
                 .replace("'", "\"");
 
+        if (originMessage.equals("")) {
+            event.setQuitMessage("");
+            return;
+        }
+
+        final boolean papiEnabled = server.getPluginManager().getPlugin("PlaceholderAPI") != null &&
+                server.getPluginManager().isPluginEnabled("PlaceholderAPI");
         if (papiEnabled) {
             originMessage = PlaceholderAPI.setPlaceholders(player, originMessage);
-        } else {
-            originMessage = originMessage.replace("{{player}}", player.getDisplayName());
         }
+
+        originMessage = originMessage.replace("{{player}}", player.getDisplayName());
 
         message = useJsonVersion ?
                 ComponentSerializer.parse(originMessage) :
