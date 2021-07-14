@@ -1,4 +1,4 @@
-# Join message (PAPI is supported)
+# Join message (PAPI is supported. If you want just clear default message, then just leave relevant parametric as ''.)
 joinMessage: '{{player}} joined the game.'
 joinMessageJson: '{"text": "{{player}} joined the game.", "color": "yellow"}'
 # Quit message
